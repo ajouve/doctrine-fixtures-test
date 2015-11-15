@@ -1,0 +1,21 @@
+{
+    "name": "ajouve/doctrine-fixtures-test",
+    "description": "Fixture test case for Doctrine Fixture and PHPUnit",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Antoine Jouve",
+            "email": "contact@ajouve.com"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "~2.8",
+    },
+    "minimum-stability": "dev",
+    "autoload" : {
+      "psr-0" : {
+        "Ajouve\\DoctrineFixturesTest" : ""
+      }
+    },
+}
