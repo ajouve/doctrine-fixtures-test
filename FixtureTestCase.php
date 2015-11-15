@@ -1,7 +1,5 @@
 <?php
 
-namespace Ajouve\DoctrineFixturesTest;
-
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -10,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Application;
 
-class FixtureTestCase extends WebTestCase
+abstract class FixtureTestCase extends WebTestCase
 {
     /**
      * @var Client
