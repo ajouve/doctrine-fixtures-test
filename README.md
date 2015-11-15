@@ -33,4 +33,4 @@ use DoctrineFixturesTest\FixtureTestCase;
         }
     }
     
-Have a look to the folloing link for more informations [http://blog.ajouve.com/symfony2/phpunit/doctrine2/2015/11/15/welcome-to-jekyll.html](http://blog.ajouve.com/symfony2/phpunit/doctrine2/2015/11/15/welcome-to-jekyll.html)
+Have a look to the folloing link for more informations [http://blog.ajouve.com/symfony2/phpunit/doctrine2/2015/11/15/set-up-doctrine2-fixtures-when-testing-with-phpunit-and-sqlite.html](http://blog.ajouve.com/symfony2/phpunit/doctrine2/2015/11/15/set-up-doctrine2-fixtures-when-testing-with-phpunit-and-sqlite.html)
