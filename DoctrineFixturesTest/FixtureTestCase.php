@@ -36,7 +36,7 @@ abstract class FixtureTestCase extends WebTestCase
 
     protected function generateSchema()
     {
-        $entityManager = $this->client->getContainer()->get('doctrine')->getEntityManager();
+        $entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
 
         $tool = new SchemaTool($entityManager);
@@ -45,7 +45,7 @@ abstract class FixtureTestCase extends WebTestCase
 
     protected function loadFixtures()
     {
-        $entityManager = $this->client->getContainer()->get('doctrine')->getEntityManager();
+        $entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
         $loader = new DataFixturesLoader($this->client->getContainer());
 
         $paths = array();
