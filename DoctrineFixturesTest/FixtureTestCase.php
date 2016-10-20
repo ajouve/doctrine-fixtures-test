@@ -2,13 +2,18 @@
 
 namespace DoctrineFixturesTest;
 
-use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\Tools\SchemaTool;
-use Symfony\Bridge\Doctrine\DataFixtures\ContainerAwareLoader as DataFixturesLoader;
+use Doctrine\Bundle\DoctrineBundle\Command\CreateDatabaseDoctrineCommand;
+use Doctrine\Bundle\DoctrineBundle\Command\DropDatabaseDoctrineCommand;
+use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand;
+use Doctrine\Bundle\MigrationsBundle\Command\MigrationsMigrateDoctrineCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\Input;
+use Symfony\Component\Console\Output\NullOutput;
 
 abstract class FixtureTestCase extends WebTestCase
 {
@@ -30,37 +35,26 @@ abstract class FixtureTestCase extends WebTestCase
         $this->application = new Application($this->client->getKernel());
         $this->application->setAutoExit(false);
 
-        $this->generateSchema();
-        $this->loadFixtures();
+        $this->executeCommand(new CreateDatabaseDoctrineCommand(), new ArrayInput([]));
+        $this->executeCommand(new MigrationsMigrateDoctrineCommand(), new ArrayInput([]));
+        $this->executeCommand(new LoadDataFixturesDoctrineCommand(), new ArrayInput([]));
     }
 
-    protected function generateSchema()
+    public function tearDown()
     {
-        $entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $metadata = $entityManager->getMetadataFactory()->getAllMetadata();
-
-        $tool = new SchemaTool($entityManager);
-        $tool->createSchema($metadata);
+        $this->executeCommand(new DropDatabaseDoctrineCommand(), new ArrayInput(['--force' => true]));
+        parent::tearDown();
     }
 
-    protected function loadFixtures()
+    private function executeCommand(Command $command, Input $input)
     {
-        $entityManager = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-        $loader = new DataFixturesLoader($this->client->getContainer());
+        $command->setApplication($this->application);
+        $input->setInteractive(false);
 
-        $paths = array();
-        foreach ($this->client->getKernel()->getBundles() as $bundle) {
-            $paths[] = $bundle->getPath().'/DataFixtures/ORM';
+        if ($command instanceof ContainerAwareCommand) {
+            $command->setContainer($this->client->getContainer());
         }
 
-        foreach ($paths as $path) {
-            if (is_dir($path)) {
-                $loader->loadFromDirectory($path);
-            }
-        }
-
-        $purger = new ORMPurger($entityManager);
-        $executor = new ORMExecutor($entityManager, $purger);
-        $executor->execute($loader->getFixtures());
+        $command->run($input, new NullOutput());
     }
 }
